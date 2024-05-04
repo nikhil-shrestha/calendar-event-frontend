@@ -92,7 +92,7 @@ export default function EventPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('http://localhost:8000/events');
+      const response = await fetch(`${process.env.BASE_API_URL}/events`);
       const data = await response.json();
       console.log(data);
   
@@ -104,7 +104,7 @@ export default function EventPage() {
 
   const deleteEvent = async (id: string) => {
     try {
-      await fetch(`http://localhost:8000/events/${id}`, {
+      await fetch(`${process.env.BASE_API_URL}/events/${id}`, {
         method: 'DELETE',
       });
       events.splice(events.findIndex((event) => event.id === id), 1);

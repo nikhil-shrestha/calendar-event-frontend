@@ -57,7 +57,7 @@ export default function NewEvent({ open, handleClose, scroll, selectedEvent, set
     }
     try {
       if (selectedEvent) {
-        const response = await fetch(`http://localhost:8000/events/${selectedEvent.id}`, {
+        const response = await fetch(`${process.env.BASE_API_URL}/events/${selectedEvent.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export default function NewEvent({ open, handleClose, scroll, selectedEvent, set
         return;
       }
       // await fetch()
-      const response = await fetch('http://localhost:8000/events', {
+      const response = await fetch(`${process.env.BASE_API_URL}/events`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
