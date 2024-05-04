@@ -58,7 +58,7 @@ export default function CalendarPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch(`${import.meta.env.BASE_API_URL}/events`);
+      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}/events`);
       const data = await response.json();
       console.log(data);
 
@@ -85,7 +85,7 @@ export default function CalendarPage() {
       const query = Object.keys(params)
                    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
                    .join('&');
-      const response = await fetch(`${import.meta.env.BASE_API_URL}/holidays?${query}`);
+      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}/holidays?${query}`);
       const data = await response.json();
       console.log(data);
 
@@ -107,7 +107,7 @@ export default function CalendarPage() {
 
   const fetchCountries = async () => {
     try {
-      const response = await fetch(`${import.meta.env.BASE_API_URL}/holidays/countries`);
+      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}/holidays/countries`);
       const data = await response.json();
       console.log(data);
 

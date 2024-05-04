@@ -92,7 +92,7 @@ export default function EventPage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch(`${import.meta.env.BASE_API_URL}/events`);
+      const response = await fetch(`${import.meta.env.VITE_BASE_API_URL}/events`);
       const data = await response.json();
       console.log(data);
   
@@ -104,7 +104,7 @@ export default function EventPage() {
 
   const deleteEvent = async (id: string) => {
     try {
-      await fetch(`${import.meta.env.BASE_API_URL}/events/${id}`, {
+      await fetch(`${import.meta.env.VITE_BASE_API_URL}/events/${id}`, {
         method: 'DELETE',
       });
       events.splice(events.findIndex((event) => event.id === id), 1);
@@ -117,6 +117,7 @@ export default function EventPage() {
   React.useEffect(() => {
     fetchEvents();
   }, []);
+
 
   return (
     <Container>
