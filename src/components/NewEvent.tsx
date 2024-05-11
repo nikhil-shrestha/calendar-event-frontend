@@ -1,6 +1,8 @@
 /* eslint-disable */
 import * as React from 'react';
 import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -9,6 +11,8 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
 
 import TextField from '@mui/material/TextField';
+import FormHelperText from '@mui/material/FormHelperText';
+
 import Grid from '@mui/material/Grid';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 import { MuiChipsInput } from 'mui-chips-input'
@@ -20,8 +24,8 @@ import { Event } from '../pages/Event';
 export interface FormValues {
   title: string;
   description: string;
-  startDateTime: string | Date | Moment;
-  endDateTime: string | Date | Moment;
+  startDateTime: Moment | null | undefined;
+  endDateTime: Moment | null | undefined;
   participants: string[];
 }
 
@@ -34,15 +38,34 @@ interface Props {
   setSelectedEvent: React.Dispatch<React.SetStateAction<Event | null>>;
 }
 
+const schema = z.object({
+  title: z.string().min(2).max(50),
+  description: z.string(),
+  // startDateTime: z.date(),
+  // endDateTime: z.coerce.date(),
+  participants: z.array(z.string().email()).refine(arr => arr.length >= 1, {
+    message: 'At least one valid email address is required',
+  }), // Adjusted for array of strings
+});
+
 export default function NewEvent({ open, handleClose, scroll, selectedEvent, setEvents, setSelectedEvent }: Props) {
-  const { register, handleSubmit, reset, control } = useForm<FormValues>();
+  const { register, handleSubmit, reset, control } = useForm<FormValues>({
+    defaultValues: {
+      title: '',
+      description: '',
+      startDateTime: null as Moment | null,
+      endDateTime: null as Moment | null,
+      participants: []
+    },
+    resolver: zodResolver(schema),
+  });
 
   React.useEffect(() => {
     reset({
       title: selectedEvent?.title ||  '',
       description: selectedEvent?.description ||  '',
-      startDateTime: moment(selectedEvent?.startDateTime) || moment(),
-      endDateTime: moment(selectedEvent?.endDateTime) || moment(),
+      startDateTime: !!selectedEvent?.startDateTime ? moment(selectedEvent?.startDateTime) : null,
+      endDateTime: !!selectedEvent?.endDateTime ? moment(selectedEvent?.endDateTime) : null,
       participants: selectedEvent?.participants || []
     })
   }, [selectedEvent])
@@ -129,12 +152,23 @@ export default function NewEvent({ open, handleClose, scroll, selectedEvent, set
                 <Controller
                   control={control}
                   name="startDateTime"
-                  render={({ field: { onChange, value } }) => (
-                    <DateTimePicker
-                      onChange={onChange} // send value to hook form
-                      value={value}
-                      label="Start Date time"
-                    />
+                  render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    <>
+                      <DateTimePicker
+                        onChange={onChange} // send value to hook form
+                        value={value}
+                        label="Start Date time"
+                        slotProps={{
+                          actionBar: {
+                            actions: ["today", "accept"],
+                          },
+                          textField: {
+                            error: !!error,
+                            helperText: error?.message,
+                          },
+                        }}
+                      />
+                    </>
                   )}
                 />
               </Grid>
@@ -142,12 +176,23 @@ export default function NewEvent({ open, handleClose, scroll, selectedEvent, set
                 <Controller
                   control={control}
                   name="endDateTime"
-                  render={({ field: { onChange, value } }) => (
-                    <DateTimePicker
-                      onChange={onChange} // send value to hook form
-                      value={value}
-                      label="End Date time"
-                    />
+                  render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    <>
+                      <DateTimePicker
+                        onChange={onChange} // send value to hook form
+                        value={value}
+                        label="End Date time"
+                        slotProps={{
+                          actionBar: {
+                            actions: ["today", "accept"],
+                          },
+                          textField: {
+                            error: !!error,
+                            helperText: error?.message,
+                          },
+                        }}
+                      />
+                    </>
                   )}
                 />
               </Grid>
@@ -165,13 +210,16 @@ export default function NewEvent({ open, handleClose, scroll, selectedEvent, set
                 <Controller
                   control={control}
                   name="participants"
-                  render={({ field: { onChange, value } }) => (
-                    <MuiChipsInput
-                      onChange={onChange} // send value to hook form
-                      value={value}
-                      label="Participants"
-                      fullWidth
-                    />
+                  render={({ field: { onChange, value }, fieldState: { error } }) => (
+                    <>
+                      <MuiChipsInput
+                        onChange={onChange} // send value to hook form
+                        value={value}
+                        label="Participants"
+                        fullWidth
+                      />
+                      {error && <FormHelperText error>{error.message}</FormHelperText>}
+                    </>
                   )}
                 />
               </Grid>

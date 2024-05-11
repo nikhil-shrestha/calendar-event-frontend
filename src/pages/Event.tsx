@@ -166,27 +166,31 @@ export default function EventPage() {
           </Table>
         </TableContainer>
       </Card>
-
-      <LocalizationProvider dateAdapter={AdapterMoment}>
-        <NewEvent 
-          open={open} 
-          handleClose={handleClose} 
-          scroll='paper' 
-          selectedEvent={selectedEvent} 
-          setEvents={setEvents}
-          setSelectedEvent={setSelectedEvent}
-        />
-      </LocalizationProvider>
-
-      <ConfirmDialog 
-        open={openDialog}
-        handleClose={() => setOpenDialog(false)}
-        handleClickAgree={() => {
-          console.log('delete');
-          setOpenDialog(false);
-          deleteEvent(selectedEvent?.id || '');
-        }} 
-      />
+      
+      {open && (
+          <LocalizationProvider dateAdapter={AdapterMoment}>
+            <NewEvent 
+              open={open} 
+              handleClose={handleClose} 
+              scroll='paper' 
+              selectedEvent={selectedEvent} 
+              setEvents={setEvents}
+              setSelectedEvent={setSelectedEvent}
+            />
+          </LocalizationProvider>
+      )}
+      
+      {openDialog && (
+          <ConfirmDialog 
+            open={openDialog}
+            handleClose={() => setOpenDialog(false)}
+            handleClickAgree={() => {
+              console.log('delete');
+              setOpenDialog(false);
+              deleteEvent(selectedEvent?.id || '');
+            }} 
+          />
+      )}
     </Container>
   );
 }
