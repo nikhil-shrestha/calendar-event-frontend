@@ -39,7 +39,7 @@ interface Props {
 }
 
 const schema = z.object({
-  title: z.string().min(2).max(50),
+  title: z.string().min(2, "Title is required!").max(50),
   description: z.string(),
   // startDateTime: z.date(),
   // endDateTime: z.coerce.date(),
